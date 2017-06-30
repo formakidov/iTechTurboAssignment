@@ -4,16 +4,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -26,10 +23,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap map;
     private BottomSheetBehavior<View> behaviour;
 
-    @BindView(R.id.bottom_sheet) BottomSheetView bottomSheetView;
-    @BindView(R.id.background_view)  View backgroundView;
-    @BindView(R.id.bottom_sheet_toolbar)  View bsToolbar;
-    @BindView(R.id.bs_content_view)  TurvoLendingWebView bsContentView;
+    @BindView(R.id.bottom_sheet)
+    BottomSheetView bottomSheetView;
+    @BindView(R.id.background_view)
+    View backgroundView;
+    @BindView(R.id.bottom_sheet_toolbar)
+    View bsToolbar;
+    @BindView(R.id.bs_content_view)
+    TurvoLendingWebView bsContentView;
 
     private LocationController locationController;
     private Subscription locationPermissionSubscription;
@@ -60,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         behaviour.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             private static final float colorThreshold = 0.6f;
             private static final float toolbarThreshold = colorThreshold;
-            private static final float scaleThreshold = 0.5f;
+//            private static final float scaleThreshold = 0.4f;
 
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -73,15 +74,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                if (slideOffset < scaleThreshold) {
-                    if (bsContentView.getScaleX() != INITIAL_BOTTOM_SHEET_SCALE) {
-                        bsContentView.setScaleX(INITIAL_BOTTOM_SHEET_SCALE);
-                    }
-                } else {
-                    bsContentView.setScaleX(INITIAL_BOTTOM_SHEET_SCALE + (
-                            (1 - INITIAL_BOTTOM_SHEET_SCALE) * (1 - (1 - slideOffset) / (1 - scaleThreshold)))
-                    );
-                }
+//                if (slideOffset < scaleThreshold) {
+//                    if (bsContentView.getScaleX() != INITIAL_BOTTOM_SHEET_SCALE) {
+//                        bsContentView.setScaleX(INITIAL_BOTTOM_SHEET_SCALE);
+//                    }
+//                } else {
+                bsContentView.setScaleX(INITIAL_BOTTOM_SHEET_SCALE + (
+                        (1 - INITIAL_BOTTOM_SHEET_SCALE) * (1 - (1 - slideOffset)/* / (1 - scaleThreshold)*/))
+                );
+//                }
                 if (slideOffset < colorThreshold) {
                     backgroundView.setAlpha(slideOffset * (1f / colorThreshold));
                 } else {
@@ -123,14 +124,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void setCurrentLocation(double latitude, double longitude) {
         if (map == null) return;
+        //noinspection MissingPermission
+        map.setMyLocationEnabled(true);
+        map.getUiSettings().setMyLocationButtonEnabled(false);
         currentLocation = new LatLng(latitude, longitude);
-        currentLocationMarker = new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.location_marker_current))
-                .position(currentLocation);
-        map.clear();
-        if (currentLocationMarker != null) {
-            map.addMarker(currentLocationMarker);
-        }
     }
 
     @Override

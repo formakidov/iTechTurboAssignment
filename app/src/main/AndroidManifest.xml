@@ -33,7 +33,7 @@
         <activity
             android:name="com.formakidov.itechturvotestproject.MapsActivity"
             android:theme="@style/AppTheme.TransparentStatus"
-            android:label="@string/title_activity_maps">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
