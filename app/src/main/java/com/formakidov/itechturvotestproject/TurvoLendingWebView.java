@@ -9,7 +9,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class TurvoLendingWebView extends WebView {
-    private boolean gesturesEnabled;
+    private boolean interceptTouchEvents;
 
     public TurvoLendingWebView(Context context) {
         super(context);
@@ -37,7 +37,7 @@ public class TurvoLendingWebView extends WebView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (gesturesEnabled) {
+        if (!interceptTouchEvents) {
             requestDisallowInterceptTouchEvent(true);
             return super.onTouchEvent(event);
         } else {
@@ -45,7 +45,7 @@ public class TurvoLendingWebView extends WebView {
         }
     }
 
-    public void setGesturesEnabled(boolean gesturesEnabled) {
-        this.gesturesEnabled = gesturesEnabled;
+    public void setInterceptTouchEvents(boolean interceptTouchEvents) {
+        this.interceptTouchEvents = interceptTouchEvents;
     }
 }

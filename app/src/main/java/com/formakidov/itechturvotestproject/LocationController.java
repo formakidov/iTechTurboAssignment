@@ -111,8 +111,8 @@ public class LocationController implements GoogleApiClient.ConnectionCallbacks,
     private void startLocationUpdates() {
         if (client.isConnected()) {
             LocationRequest locationRequest = new LocationRequest();
-            locationRequest.setFastestInterval(10000);
-            locationRequest.setInterval(10000);
+            locationRequest.setFastestInterval(5000);
+            locationRequest.setInterval(5000);
             locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
             checkSettings(locationRequest);
         }

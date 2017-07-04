@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">iTechTurvoAssignment</string>
+    <string name="location_permission_is_denied">Location permission is denied.</string>
+    <string name="gps_is_disabled">GPS is disabled.</string>
+    <string name="settings">Settings</string>
 </resources>
