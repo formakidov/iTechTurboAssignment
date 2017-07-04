@@ -21,7 +21,7 @@
         android:alpha="0"
         android:background="#000000"/>
 
-    <com.formakidov.itechturvotestproject.BottomSheetView
+    <FrameLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,7 +45,7 @@
 
         </LinearLayout>
 
-    </com.formakidov.itechturvotestproject.BottomSheetView>
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/bottom_sheet_toolbar"

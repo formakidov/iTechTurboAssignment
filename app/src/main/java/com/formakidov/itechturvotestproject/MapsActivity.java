@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,7 +27,7 @@ import rx.Subscription;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     @BindView(R.id.bottom_sheet)
-    BottomSheetView bottomSheetView;
+    FrameLayout bottomSheetView;
     @BindView(R.id.coordinatorlayout)
     CoordinatorLayout coordinatorlayout;
     @BindView(R.id.background_view)
