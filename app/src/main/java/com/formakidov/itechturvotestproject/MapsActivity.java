@@ -193,7 +193,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void zoomToCurrentLocation(boolean animated) {
         if (map == null || currentLocation == null) return;
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLocation, 14);
+        float curZoom = map.getCameraPosition().zoom;
+        int defZoom = 14;
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLocation, curZoom > defZoom ? curZoom : defZoom);
         if (animated) {
             map.animateCamera(cameraUpdate);
         } else {
