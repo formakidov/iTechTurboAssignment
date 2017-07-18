@@ -36,12 +36,14 @@
             <com.formakidov.itechturvotestproject.BottomSheetCurtainView
                 android:id="@+id/bs_curtain_view"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"/>
+                android:layout_height="@dimen/bottom_sheet_toolbar_total_height"/>
 
-            <com.formakidov.itechturvotestproject.TurvoLendingWebView
+            <com.formakidov.itechturvotestproject.BottomSheetRecyclerView
                 android:id="@+id/bs_content_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:overScrollMode="never"/>
 
         </LinearLayout>
 
@@ -51,7 +53,7 @@
         android:id="@+id/bottom_sheet_toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_sheet_toolbar_height"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/status_bar_height"
         android:translationY="-100dp">
 
         <ImageView

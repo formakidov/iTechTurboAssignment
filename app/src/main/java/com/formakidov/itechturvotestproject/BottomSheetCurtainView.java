@@ -3,14 +3,13 @@ package com.formakidov.itechturvotestproject;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
 
 class BottomSheetCurtainView extends FrameLayout {
 
-    private boolean interceptTouchEvents;
+    private boolean consumeTouchEvents;
 
     public BottomSheetCurtainView(Context context) {
         super(context);
@@ -26,15 +25,15 @@ class BottomSheetCurtainView extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!interceptTouchEvents) {
+        if (consumeTouchEvents) {
+            return true;
+        } else {
             requestDisallowInterceptTouchEvent(true);
             return super.onTouchEvent(event);
-        } else {
-            return true;
         }
     }
 
-    public void setInterceptTouchEvents(boolean interceptTouchEvents) {
-        this.interceptTouchEvents = interceptTouchEvents;
+    public void setConsumeTouchEvents(boolean interceptTouchEvents) {
+        this.consumeTouchEvents = interceptTouchEvents;
     }
 }

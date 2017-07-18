@@ -9,6 +9,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -20,8 +21,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Arrays;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Subscription;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -35,7 +39,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @BindView(R.id.bottom_sheet_toolbar)
     View bsToolbar;
     @BindView(R.id.bs_content_view)
-    TurvoLendingWebView bsWebView;
+    BottomSheetRecyclerView bsRecyclerView;
     @BindView(R.id.bs_curtain_view)
     BottomSheetCurtainView bsCurtainView;
 
@@ -47,6 +51,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng currentLocation;
 
     public static final float INITIAL_BOTTOM_SHEET_SCALE = 0.9f;
+
+    private CardsAdapter cardsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,63 +68,70 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final int toolbarHeight = getResources().getDimensionPixelOffset(R.dimen.bottom_sheet_toolbar_height);
         final int toolbarTranslationLength = getResources().getDimensionPixelOffset(R.dimen.bottom_sheet_toolbar_top_margin) + toolbarHeight;
 
-        bsWebView.setScaleX(INITIAL_BOTTOM_SHEET_SCALE);
+        bsRecyclerView.setScaleX(INITIAL_BOTTOM_SHEET_SCALE);
 
-        findViewById(R.id.btn_close).setOnClickListener(v -> behaviour.setState(BottomSheetBehavior.STATE_COLLAPSED));
+        cardsAdapter = new CardsAdapter(this);
+        cardsAdapter.setItems(Arrays.asList(
+                new CardData("http://www.google.com"),
+                new CardData("http://www.google.com"),
+                new CardData("http://www.google.com"),
+                new CardData("http://www.google.com"),
+                new CardData("http://www.google.com"),
+                new CardData("http://www.google.com")));
+        bsRecyclerView.setAdapter(cardsAdapter);
+
+        bsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         behaviour = BottomSheetBehavior.from(bottomSheetView);
         behaviour.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             private static final float colorThreshold = 0.6f;
             private static final float toolbarThreshold = colorThreshold;
-//            private static final float scaleThreshold = 0.4f;
 
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     Log.d("logf", "onStateChanged: STATE_COLLAPSED");
-                    bsWebView.setInterceptTouchEvents(true);
-                    bsCurtainView.setInterceptTouchEvents(false);
+                    bsRecyclerView.setInterceptTouchEvents(true);
+                    bsCurtainView.setConsumeTouchEvents(false);
                 } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     Log.d("logf", "onStateChanged: STATE_EXPANDED");
-                    bsWebView.setInterceptTouchEvents(false);
-                    bsCurtainView.setInterceptTouchEvents(true);
+                    bsRecyclerView.setInterceptTouchEvents(false);
+                    bsCurtainView.setConsumeTouchEvents(true);
                 }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-//                if (slideOffset < scaleThreshold) {
-//                    if (bsWebView.getScaleX() != INITIAL_BOTTOM_SHEET_SCALE) {
-//                        bsWebView.setScaleX(INITIAL_BOTTOM_SHEET_SCALE);
-//                    }
-//                } else {
-                bsWebView.setScaleX(INITIAL_BOTTOM_SHEET_SCALE + (
-                        (1 - INITIAL_BOTTOM_SHEET_SCALE) * (1 - (1 - slideOffset)/* / (1 - scaleThreshold)*/))
-                );
-//                }
+                UIUtils.hideKeyboard(MapsActivity.this); // TODO: 7/13/17
+                float scaleRatio = INITIAL_BOTTOM_SHEET_SCALE + ((1 - INITIAL_BOTTOM_SHEET_SCALE) * (1 - (1 - slideOffset)));
+                bsRecyclerView.setScaleX(scaleRatio);
+
                 if (slideOffset < colorThreshold) {
                     backgroundView.setAlpha(slideOffset * (1f / colorThreshold));
                 } else {
-                    if (backgroundView.getAlpha() != 1) {
-                        backgroundView.setAlpha(1);
-                    }
+                    backgroundView.setAlpha(1);
                 }
                 if (slideOffset < toolbarThreshold) {
-                    if (bsToolbar.getTranslationY() != -toolbarTranslationLength) {
-                        bsToolbar.setTranslationY(-toolbarTranslationLength);
-                    }
+                    bsToolbar.setTranslationY(-toolbarTranslationLength);
                 } else {
                     float translation = -(toolbarTranslationLength * ((1 - slideOffset) / (1 - colorThreshold)));
                     bsToolbar.setTranslationY(translation);
                 }
             }
         });
-        bsCurtainView.setInterceptTouchEvents(false);
-        bsWebView.setInterceptTouchEvents(true);
+        bsCurtainView.setConsumeTouchEvents(false);
+        bsRecyclerView.setInterceptTouchEvents(true);
 
         behaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
+
         findLocation();
+    }
+
+    @OnClick(R.id.btn_close)
+    void onCloseBottomSheetClick() {
+        UIUtils.hideKeyboard(MapsActivity.this);
+        behaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     private void findLocation() {
@@ -205,15 +218,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        locationController.stopUpdates();
-        if (locationPermissionSubscription != null) {
-            locationPermissionSubscription.unsubscribe();
-        }
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
         findLocation();
@@ -223,5 +227,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onStop() {
         locationController.pauseUpdates();
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        locationController.stopUpdates();
+        if (locationPermissionSubscription != null) {
+            locationPermissionSubscription.unsubscribe();
+        }
     }
 }
