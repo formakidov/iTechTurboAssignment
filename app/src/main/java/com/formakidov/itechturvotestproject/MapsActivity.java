@@ -19,9 +19,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,8 +42,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     View bsToolbar;
     @BindView(R.id.bs_content_view)
     BottomSheetRecyclerView bsRecyclerView;
-    @BindView(R.id.bs_curtain_view)
-    BottomSheetCurtainView bsCurtainView;
 
     private GoogleMap map;
     private BottomSheetBehavior<View> behaviour;
@@ -71,13 +71,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         bsRecyclerView.setScaleX(INITIAL_BOTTOM_SHEET_SCALE);
 
         cardsAdapter = new CardsAdapter(this);
-        cardsAdapter.setItems(Arrays.asList(
-                new CardData("http://www.google.com"),
-                new CardData("http://www.google.com"),
-                new CardData("http://www.google.com"),
-                new CardData("http://www.google.com"),
-                new CardData("http://www.google.com"),
-                new CardData("http://www.google.com")));
+        List<CardData> items = new ArrayList<>();
+        for (int i = 1; i <= 20; i++) {
+            items.add(new CardData("Item title #" + i, "Item subtitle #" + i));
+        }
+        cardsAdapter.setItems(items);
         bsRecyclerView.setAdapter(cardsAdapter);
 
         bsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -89,14 +87,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                UiSettings mapSettings = map.getUiSettings();
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     Log.d("logf", "onStateChanged: STATE_COLLAPSED");
                     bsRecyclerView.setInterceptTouchEvents(true);
-                    bsCurtainView.setConsumeTouchEvents(false);
+                    mapSettings.setScrollGesturesEnabled(true);
                 } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     Log.d("logf", "onStateChanged: STATE_EXPANDED");
                     bsRecyclerView.setInterceptTouchEvents(false);
-                    bsCurtainView.setConsumeTouchEvents(true);
+                    mapSettings.setScrollGesturesEnabled(false);
                 }
             }
 
@@ -119,11 +118,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
-        bsCurtainView.setConsumeTouchEvents(false);
         bsRecyclerView.setInterceptTouchEvents(true);
 
         behaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
 
         findLocation();
     }
@@ -131,6 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @OnClick(R.id.btn_close)
     void onCloseBottomSheetClick() {
         UIUtils.hideKeyboard(MapsActivity.this);
+        bsRecyclerView.scrollToPosition(0);
         behaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 

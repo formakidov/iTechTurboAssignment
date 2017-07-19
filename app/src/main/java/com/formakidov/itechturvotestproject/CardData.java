@@ -1,14 +1,16 @@
 package com.formakidov.itechturvotestproject;
 
 class CardData {
-    private final String url;
+    private final String title;
+    private final String subTitle;
 
-    public CardData(String url) {
-        this.url = url;
+    CardData(String title, String subTitle) {
+        this.title = title;
+        this.subTitle = subTitle;
     }
 
-    public String getUrl() {
-        return url;
+    public String getTitle() {
+        return title;
     }
 
 }

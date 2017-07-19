@@ -4,4 +4,5 @@
     <dimen name="bottom_sheet_toolbar_height">56dp</dimen>
     <dimen name="bottom_sheet_toolbar_top_margin">@dimen/status_bar_height</dimen>
     <dimen name="bottom_sheet_toolbar_total_height">80dp</dimen>
+    <dimen name="peekHeight">160dp</dimen>
 </resources>

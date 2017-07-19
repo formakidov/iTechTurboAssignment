@@ -9,8 +9,6 @@ import android.widget.FrameLayout;
 
 class BottomSheetCurtainView extends FrameLayout {
 
-    private boolean consumeTouchEvents;
-
     public BottomSheetCurtainView(Context context) {
         super(context);
     }
@@ -25,15 +23,7 @@ class BottomSheetCurtainView extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (consumeTouchEvents) {
-            return true;
-        } else {
-            requestDisallowInterceptTouchEvent(true);
-            return super.onTouchEvent(event);
-        }
-    }
-
-    public void setConsumeTouchEvents(boolean interceptTouchEvents) {
-        this.consumeTouchEvents = interceptTouchEvents;
+        requestDisallowInterceptTouchEvent(true);
+        return super.onTouchEvent(event);
     }
 }

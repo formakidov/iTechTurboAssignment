@@ -1,12 +1,13 @@
 package com.formakidov.itechturvotestproject;
 
 import android.view.View;
+import android.widget.TextView;
 
 import butterknife.BindView;
 
 public class CardViewHolder extends BindableViewHolder<CardData> {
-    @BindView(R.id.wv)
-    TurvoWebView webView;
+    @BindView(R.id.title)
+    TextView title;
 
     public CardViewHolder(View view) {
         super(view);
@@ -14,6 +15,6 @@ public class CardViewHolder extends BindableViewHolder<CardData> {
 
     @Override
     public void bind(CardData data) {
-        webView.loadUrl(data.getUrl());
+        title.setText(data.getTitle());
     }
 }
